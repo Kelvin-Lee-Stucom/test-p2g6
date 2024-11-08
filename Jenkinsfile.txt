@@ -1,39 +1,57 @@
 pipeline {
     agent any
     environment {
-        // Nombre del servidor SonarQube configurado en Jenkins
+        // SonarQube server details - make sure "SonarQube" matches your Jenkins SonarQube configuration
         SONARQUBE_SERVER = 'SonarQube'
-        // Agregar sonar-scanner al PATH
-        PATH = "/var/jenkins_home/workspace/test5"
     }
     stages {
         stage('Checkout') {
             steps {
-                // Clonar el código fuente desde el repositorio
+                // Checkout your source code
                 checkout scm
             }
         }
         stage('SonarQube Analysis') {
             steps {
-                // Configurar el entorno de SonarQube
-                withSonarQubeEnv("${SONARQUBE_SERVER}") {
-                    // Ejecutar el análisis con SonarScanner
-                    sh '''
+                withSonarQubeEnv(SONARQUBE_SERVER) {
+                    // Run SonarScanner with specific project properties
+                    sh """
                         sonar-scanner \
-                        -Dsonar.projectKey=testPipeLine \
-                        -Dsonar.sources=vulnerabilities \
-                        -Dsonar.php.version=8.0
-                    '''
+                        -Dsonar.projectKey=test4-escanner \
+                        -Dsonar.projectName=test4-Scan \
+                        -Dsonar.projectVersion=1.0 \
+                        -Dsonar.sources=/var/jenkins_home/workspace/test4 \
+                        -Dsonar.language=php \
+                        -Dsonar.sourceEncoding=UTF-8 \
+                        -Dsonar.login=admin \
+                        -Dsonar.password=Stucom.2024!
+                    """
                 }
             }
         }
         stage('Quality Gate') {
             steps {
-                // Esperar el resultado del Quality Gate
-                timeout(time: 1, unit: 'HOURS') {
-                    waitForQualityGate abortPipeline: true
+                // Wait for SonarQube quality gate result
+                script {
+                    def qualityGate = waitForQualityGate()
+                    if (qualityGate.status != 'OK') {
+                        error "Pipeline failed due to SonarQube quality gate failure: ${qualityGate.status}"
+                    }
                 }
             }
+        }
+    }
+    post {
+        always {
+            // Archive any relevant artifacts and cleanup
+            echo 'Cleaning up workspace'
+            cleanWs()
+        }
+        failure {
+            echo 'Pipeline failed'
+        }
+        success {
+            echo 'Pipeline succeeded'
         }
     }
 }
