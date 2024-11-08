@@ -1,24 +1,24 @@
 pipeline {
     agent any
+    tools {
+        sonarScanner 'SonarQube Scanner'  // The name of the tool in Global Tool Configuration
+    }
     environment {
-        // SonarQube server details - make sure "SonarQube" matches your Jenkins SonarQube configuration
         SONARQUBE_SERVER = 'SonarQube'
     }
     stages {
         stage('Checkout') {
             steps {
-                // Checkout your source code
                 checkout scm
             }
         }
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv(SONARQUBE_SERVER) {
-                    // Run SonarScanner with specific project properties
                     sh """
-                        sonar-scanner \
-                        -Dsonar.projectKey=test4-escanner \
-                        -Dsonar.projectName=test4-Scan \
+                        ${tool 'SonarQube Scanner'}/bin/sonar-scanner \
+                        -Dsonar.projectKey=test5-escanner \
+                        -Dsonar.projectName=test5-Scan \
                         -Dsonar.projectVersion=1.0 \
                         -Dsonar.sources=/var/jenkins_home/workspace/test4 \
                         -Dsonar.language=php \
@@ -31,7 +31,6 @@ pipeline {
         }
         stage('Quality Gate') {
             steps {
-                // Wait for SonarQube quality gate result
                 script {
                     def qualityGate = waitForQualityGate()
                     if (qualityGate.status != 'OK') {
@@ -43,8 +42,6 @@ pipeline {
     }
     post {
         always {
-            // Archive any relevant artifacts and cleanup
-            echo 'Cleaning up workspace'
             cleanWs()
         }
         failure {
