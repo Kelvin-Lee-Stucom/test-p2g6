@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools {
-        sonarScanner 'SonarQube Scanner'  // The name of the tool in Global Tool Configuration
+        SonarQube_Scanner 'SonarQube Scanner'  // The name of the tool in Global Tool Configuration
     }
     environment {
         SONARQUBE_SERVER = 'SonarQube'
