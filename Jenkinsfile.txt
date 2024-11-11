@@ -21,8 +21,7 @@ pipeline {
                         -Dsonar.sources=/var/jenkins_home/workspace/test5 \
                         -Dsonar.language=php \
                         -Dsonar.sourceEncoding=UTF-8 \
-                        -Dsonar.login=admin \
-                        -Dsonar.password=Stucom.2024!
+                        -Dsonar.token= sqa_ff9592e202d0191f219da29b72b5b4d7c5644ed8
                     """
                 }
             }
