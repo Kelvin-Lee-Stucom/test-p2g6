@@ -13,7 +13,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv(SONARQUBE_SERVER) {
-                    withCredentials([string(credentialsId: 'sqa_ff9592e202d0191f219da29b72b5b4d7c5644ed8', variable: 'SONAR_TOKEN')]) {
+                    withCredentials([string(credentialsId: 'sqa_b07a3249dd7fb558726496bed4c95d4190c4b30f', variable: 'SONAR_TOKEN')]) {
                         sh """
                             ${tool 'SonarQube Scanner'}/bin/sonar-scanner \
                             -Dsonar.projectKey=test5-escanner \
