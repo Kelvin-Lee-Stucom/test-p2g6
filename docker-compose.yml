@@ -5,7 +5,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./web:/usr/share/nginx/html:ro
+      - ./web:/usr/share/nginx
   db:
     image: mysql
     ports:
